@@ -1,0 +1,56 @@
+body 
+{
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	width: 100%; 
+	height: 100%;
+	background-color: #112;
+	color: #3A3;
+	font-family: Courier, monospace;
+	font-size: 12pt;
+}
+
+#jbashscreen
+{
+	padding: 5px;
+	width: 98%;
+ 	/*height: 100%;*/
+	/*border: 1px solid #ff0;*/
+	overflow: auto;
+}
+
+a, a:visited
+{
+	text-decoration:none;
+	color: #FA3;
+}
+
+a:hover
+{
+	text-decoration: none;
+	color:#FA3;
+}
+
+// colour of "your" text on the screen.
+.jBashCmd
+{
+	color: #AA3;
+}
+
+#jBashInnerScreen {}
+#jBashInnerInput
+{
+	color: #3A3;
+	background-color: #112;
+	border: none;
+	/*border: 1px solid #FA3;*/
+	width: 100%;
+	font-family: Courier, monospace;
+	font-size: 12pt;
+}
+
+#jBashInnerInput:focus
+{
+	outline: none;
+}
