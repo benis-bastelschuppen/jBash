@@ -19,10 +19,10 @@ param[1] = first "parameter"
 
 You can load local files into the console with {l}:
 	l myfile.html
+This works only on the server (also localhost), not with file:/// !
+You can also load websites, but mostly they deny loading into iframes/objects.
 
 Clear the screen with {cls}:
 	cls
-
-This works only on the server (also localhost), not with file:/// !
 
 Have fun!
