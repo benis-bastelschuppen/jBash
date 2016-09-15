@@ -40,8 +40,8 @@ jBash = function()
 			}
 		});
 
-		// prevent input from loosing the focus.
-		_input.focusout(function(){_input.focus();});
+		// prevent input from loosing the focus, but only if the console covers the whole page.
+		_input.focusout(function(){if(jBash.ScrollWithBody==true){_input.focus();}});
 	};
 
 	// scroll to the bottom of an element.
