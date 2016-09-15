@@ -99,11 +99,26 @@ jBash = function()
 		if(_screen==null)
 			return;
 
-		if(pagename=="" || pagename==null)
+		// remove ../ requests.
+		var oldpagename = pagename;
+		pagename=pagename.replace(/\.\.\//g,"");
+		if(oldpagename!=pagename)
+			_addLine("Load: Using {../} is not allowed and thereby removed.");
+
+		
+		var oldpagename = pagename;
+		pagename=pagename.replace(/\.\./g,"");
+		if(oldpagename!=pagename)
+		{
+			_addLine("Load: Using {..} is not allowed.");
+			return;
+		}
+
+		if(pagename=="" || pagename==null || pagename == ".")
 		{
 			_addLine("No page given for loading.");
 			return;
-		};
+		}
 
 		// load the page.
 		jQuery.get(pagename, function(data) 
