@@ -17,15 +17,23 @@ jBash = function()
 	var _outerScreen = null;
 	var _screen = null;
 	var _input = null;
+	var _startpage = null;
 	var _commands = Array();
 
-	this.initialize = function(screenID)
+	this.initialize = function(screenID, startpage)
 	{
 		var shellWidth = jBash.ShellText.length * jBash.ShellCharacterWidth;
 		_outerScreen = $(screenID);
 		_outerScreen.html("<div id='jBashInnerScreen'></div><table border='0' style='width: 100%;'><tr><td style='width:"+shellWidth+"px;'>"+jBash.ShellText+"</td><td style='width:*;'><input id='jBashInnerInput' type='text' /></td></tr></table>");
 		_screen = $('#jBashInnerScreen');
 		_input = $('#jBashInnerInput');
+
+		// load the start page if one is given.
+		if(startpage != null && startpage !="")
+		{
+			_startpage = startpage;
+			_loadPage(startpage);
+		}
 
 		// catch enter and parse command.
 		_input.keypress(function(e)
@@ -104,19 +112,19 @@ jBash = function()
 
 		// remove ../ requests.
 		var oldpagename = pagename;
-		pagename=pagename.replace(/\.\.\//g,"");
+		if(pagename != null) pagename=pagename.replace(/\.\.\//g,"");
 		if(oldpagename!=pagename)
 			_addLine("Load: Using {../} is not allowed and thereby removed.");
-
 		
 		var oldpagename = pagename;
-		pagename=pagename.replace(/\.\./g,"");
+		if(pagename!=null) pagename=pagename.replace(/\.\./g,"");
 		if(oldpagename!=pagename)
 		{
 			_addLine("Load: Using {..} is not allowed.");
 			return;
 		}
 
+		// check again for null.
 		if(pagename=="" || pagename==null || pagename == ".")
 		{
 			_addLine("No page given for loading.");
