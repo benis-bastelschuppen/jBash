@@ -58,7 +58,7 @@ jBash = function()
 	{
 		text=text.replace(/</g, "&lt;");
 		text=text.replace(/>/g, "&gt;");
-		_addLine(jBash.ShellText+"&nbsp;<span class='jBashCmd'>"+text+"</span>");
+		_addLine(jBash.ShellText+'&nbsp;<span class="jBashCmd">'+text+'</span>');
 		_parseLine(text);
 	};
 
@@ -74,6 +74,14 @@ jBash = function()
 			}
 		};
 		_addLine("Command {"+s[0]+"} does not exist.");
+	};
+
+	// parse a line (without adding it to the console.)
+	this.Parse = function(text)
+	{
+		text=text.replace(/</g, "&lt;");
+		text=text.replace(/>/g, "&gt;");
+		_parseLine(text);	
 	};
 
 	// add a text line to the output screen.
@@ -146,6 +154,7 @@ jBash.ShellCharacterWidth = 10;
 
 jBash.initialize = function(screenID, inputID) {jBash.instance.initialize(screenID,inputID);};
 jBash.registerCommand = function(name, func) {jBash.instance.registerCommand(name,func);};
+jBash.Parse = function(text) {jBash.instance.Parse(text);};
 
 // register some commands.
 jBash.registerCommand("l", function(params) {jBash.instance.loadPage(params[1]);});

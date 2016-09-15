@@ -32,13 +32,13 @@ a:hover
 	color:#FA3;
 }
 
-// colour of "your" text on the screen.
+/* colour of "your" text on the screen. */
 .jBashCmd
 {
 	color: #AA3;
 }
 
-#jBashInnerScreen {}
+
 #jBashInnerInput
 {
 	color: #3A3;
@@ -54,3 +54,5 @@ a:hover
 {
 	outline: none;
 }
+
+#jBashInnerScreen {;;}
