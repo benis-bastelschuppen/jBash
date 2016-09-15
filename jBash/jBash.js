@@ -4,11 +4,13 @@
 	needs jQuery.
 */
 
-jBashObject = function(name, func)
+jBashObject = function(name, desc, func)
 {
 	var _name = name;
 	var _func = func;
+	var _desc = desc;
 	this.Name = function() {return _name;};
+	this.Description = function() {return _desc;};
 	this.Func = function(params) {return _func(params);};
 };
 
@@ -44,6 +46,8 @@ jBash = function()
 				_input.val("");
 				if(text!="")
 					_doLine(text);
+				else
+					_addLine(jBash.ShellText);
 				_input.focus();
 			}
 		});
@@ -100,7 +104,7 @@ jBash = function()
 	{
 		if(_screen==null)
 			return;
-		_screen.html(_screen.html()+"<br />"+text);
+		_screen.html(_screen.html()+text+"<br />");
 		_bottom();
 	};
 
@@ -150,12 +154,33 @@ jBash = function()
 	};
 
 	// register a command.
-	this.registerCommand = function(name, func)
+	this.registerCommand = function(name, description, func)
 	{
 		name=name.replace(/</g, "&lt;");
 		name=name.replace(/>/g, "&gt;");
-		var cmd = new jBashObject(name, func);
+		var cmd = new jBashObject(name, description, func);
 		_commands.push(cmd);
+	};
+
+	// show a list with all commands.
+	this.showCommandList = function()
+	{
+		var txt="<br />";
+		txt+="<table border='0'>";
+		txt+="<tr><td colspan='3'>Registered jBash commands:<hr></td></tr>";
+		for(var i=0;i<_commands.length;i++)
+		{
+			txt+="<tr><td class='jBashCmd'>";
+			txt+=_commands[i].Name();
+			txt+="</td><td>";
+			txt+=": ";
+			txt+="</td><td>";
+			txt+=_commands[i].Description();
+			txt+="</td></tr>";
+		};
+		txt+="<tr><td colspan='3'><hr></td></tr>";
+		txt+="</table>";
+		_addLine(txt);
 	};
 
 	$(document).ready(function() 
@@ -179,10 +204,12 @@ jBash.ShellText = "root@trtf_server:";
 jBash.ShellCharacterWidth = 10;
 
 jBash.initialize = function(screenID, inputID) {jBash.instance.initialize(screenID,inputID);};
-jBash.registerCommand = function(name, func) {jBash.instance.registerCommand(name,func);};
+jBash.registerCommand = function(name, description, func) {jBash.instance.registerCommand(name, description, func);};
 jBash.Parse = function(text) {jBash.instance.Parse(text);};
 
 // register some commands.
-jBash.registerCommand("l", function(params) {jBash.instance.loadPage(params[1]);});
-jBash.registerCommand("load", function(params) {jBash.instance.loadPage(params[1]);});
-jBash.registerCommand("cls", function(params) {jBash.instance.cls();});
+jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) {jBash.instance.showCommandList();});
+jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
+jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(params[1]);});
+jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(params[1]);});
+

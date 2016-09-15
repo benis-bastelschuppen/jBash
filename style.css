@@ -56,3 +56,11 @@ a:hover
 }
 
 #jBashInnerScreen {;;}
+
+/* additional stuff */
+hr
+{
+	border: 0px;
+	border-top: 2px dashed #3A3;
+	background-color: transparent;
+}
