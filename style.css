@@ -11,12 +11,11 @@ body
 	font-size: 12pt;
 }
 
+/* This is the div which you must create. */
 #jbashscreen
 {
 	padding: 5px;
 	width: 98%;
- 	/*height: 100%;*/
-	/*border: 1px solid #ff0;*/
 	overflow: auto;
 }
 
