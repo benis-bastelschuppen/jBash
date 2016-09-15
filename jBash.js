@@ -27,6 +27,7 @@ jBash = function()
 		_screen = $('#jBashInnerScreen');
 		_input = $('#jBashInnerInput');
 
+		// catch enter and parse command.
 		_input.keypress(function(e)
 		{
 			if(e.keyCode == 13)
@@ -38,8 +39,10 @@ jBash = function()
 				_input.focus();
 			}
 		});
-	};
 
+		// prevent input from loosing the focus.
+		_input.focusout(function(){_input.focus();});
+	};
 
 	// scroll to the bottom of an element.
 	var _bottom=function()
@@ -147,9 +150,9 @@ jBash = function()
 		_commands.push(cmd);
 	};
 
-	// set the focus for the input.
 	$(document).ready(function() 
 	{
+		// set the focus for the input.
 		if(_input!=null)
 			_input.focus();
 	});
