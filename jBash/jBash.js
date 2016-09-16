@@ -69,6 +69,21 @@ jBash = function()
 			_outerScreen.scrollTop(_outerScreen[0].scrollHeight);
 	};
 
+	// get a string with the combined parameters.
+	this.CP = function(p)
+	{
+		var txt="";
+		if(p.length>=2)
+		{
+			for(var i=1;i<p.length;i++)
+			{
+			    txt+=" "+p[i];
+			}
+		}
+		txt=txt.trim();
+		return txt;
+	}
+
 	// "execute" a line
 	var _doLine = function(text)
 	{
@@ -81,6 +96,7 @@ jBash = function()
 	// parse a text line and call the appropiate function.
 	var _parseLine = function(text)
 	{
+		text=text.trim();
 		var s = text.split(" ");
 		for(var i=0;i<_commands.length;i++)
 		{
@@ -130,6 +146,10 @@ jBash = function()
 		if(_screen==null)
 			return;
 
+		pagename=pagename.trim();
+		// remove / at begin.
+		if(pagename[0]=="/")
+			pagename=pagename.replace("/","");
 		// remove ../ requests.
 		var oldpagename = pagename;
 		if(pagename != null) pagename=pagename.replace(/\.\.\//g,"");
@@ -222,11 +242,13 @@ jBash.ShellCharacterWidth = 10;
 jBash.initialize = function(screenID, inputID) {jBash.instance.initialize(screenID,inputID);};
 jBash.registerCommand = function(name, description, func) {jBash.instance.registerCommand(name, description, func);};
 jBash.Parse = function(text) {jBash.instance.Parse(text);};
+jBash.CP = function(p) {return jBash.instance.CP(p);}
 
 // register some commands.
 jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) {jBash.instance.showCommandList();});
 jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
-jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(params[1]);});
-jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(params[1]);});
-jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(params[1]);});
+jBash.registerCommand("dir", "Show file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php');});
+jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.CP(params));});
+jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.CP(params));});
+jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.CP(params));});
 

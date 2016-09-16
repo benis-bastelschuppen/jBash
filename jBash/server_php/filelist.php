@@ -1,14 +1,13 @@
 <?php
 
-if ($handle = opendir('./../')) {
-    echo "Directory handle: $handle\n";
-    echo "Entries:<br />";
+if ($handle = opendir('./../../')) {
+    echo "<br /><table border='0'><tr><td>B.O.S.S. root directory:<br><hr></td></tr>";
 
     /* This is the correct way to loop over the directory. */
     while (false !== ($entry = readdir($handle))) {
-        echo "$entry<br />";
+        echo "<tr><td>$entry</td></tr>";
     }
-
+echo("<tr><td><hr /></td></tr></table>");
     closedir($handle);
 }
 ?>
