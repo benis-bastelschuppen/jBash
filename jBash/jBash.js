@@ -70,7 +70,7 @@ jBash = function()
 	};
 
 	// get an array with the parameters, removed spaces at begin and end.
-	this.CP = function(p)
+	this.getParams = function(p)
 	{
 		// the first parameter is the command name. we remove it.
 		var txt="";
@@ -78,9 +78,11 @@ jBash = function()
 		{
 			for(var i=1;i<p.length;i++)
 			{
-			    txt+=" "+p[i];
+				if(p[i] != "" && p[i]!=null)
+			    		txt+=" "+p[i];
 			}
 		}
+		// remove spaces at begin and end.
 		txt=txt.trim();
 		// now we split the text again.
 		var pr = txt.split(" ");
@@ -128,14 +130,42 @@ jBash = function()
 		_bottom();
 	};
 
+	// get filename without ../
+	var _parseFileName = function(pagename)
+	{
+		pagename=pagename.trim();
+		// remove / at begin.
+		if(pagename[0]=="/")
+			pagename=pagename.replace("/","");
+		// remove ../ requests.
+		var oldpagename = pagename;
+		if(pagename != null) pagename=pagename.replace(/\.\.\//g,"");
+		if(oldpagename!=pagename)
+			_addLine("Load/Download: Using {../} is not allowed and thereby removed.");
+		
+		var oldpagename = pagename;
+		if(pagename!=null) pagename=pagename.replace(/\.\./g,"");
+		if(oldpagename!=pagename)
+		{
+			_addLine("Load/Download: Using {..} is not allowed.");
+			return -1;
+		}
+
+		// check again for null.
+		if(pagename=="" || pagename==null || pagename == ".")
+		{
+			_addLine("No page given for loading.");
+			return -1;
+		}
+		return pagename;
+	}
+
 	// try to download a file.
 	this.downloadURL=function(url) 
 	{
-		if(url==null || url=="")
-		{
-			_addLine("No page given for download.");
+		url=_parseFileName(url);
+		if(url == -1)
 			return;
-		}
 
 		_addLine("Trying to download {"+url+"}..");
 	        $('#jBashHiddenDownloadItem').attr('href',url);
@@ -149,30 +179,9 @@ jBash = function()
 		if(_screen==null)
 			return;
 
-		pagename=pagename.trim();
-		// remove / at begin.
-		if(pagename[0]=="/")
-			pagename=pagename.replace("/","");
-		// remove ../ requests.
-		var oldpagename = pagename;
-		if(pagename != null) pagename=pagename.replace(/\.\.\//g,"");
-		if(oldpagename!=pagename)
-			_addLine("Load: Using {../} is not allowed and thereby removed.");
-		
-		var oldpagename = pagename;
-		if(pagename!=null) pagename=pagename.replace(/\.\./g,"");
-		if(oldpagename!=pagename)
-		{
-			_addLine("Load: Using {..} is not allowed.");
+		pagename = _parseFileName(pagename);
+		if(pagename == -1)
 			return;
-		}
-
-		// check again for null.
-		if(pagename=="" || pagename==null || pagename == ".")
-		{
-			_addLine("No page given for loading.");
-			return;
-		}
 
 		// load the page.
 		jQuery.get(pagename, function(data) 
@@ -245,13 +254,13 @@ jBash.ShellCharacterWidth = 10;
 jBash.initialize = function(screenID, inputID) {jBash.instance.initialize(screenID,inputID);};
 jBash.registerCommand = function(name, description, func) {jBash.instance.registerCommand(name, description, func);};
 jBash.Parse = function(text) {jBash.instance.Parse(text);};
-jBash.CP = function(p) {return jBash.instance.CP(p);}
+jBash.GP = function(p) {return jBash.instance.getParams(p);}
 
 // register some commands.
 jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) {jBash.instance.showCommandList();});
 jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
 jBash.registerCommand("dir", "Show file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php');});
-jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.CP(params)[0]);});
-jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.CP(params)[0]);});
-jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.CP(params)[0]);});
+jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
+jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
+jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.GP(params)[0]);});
 
