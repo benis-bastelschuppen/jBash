@@ -69,9 +69,10 @@ jBash = function()
 			_outerScreen.scrollTop(_outerScreen[0].scrollHeight);
 	};
 
-	// get a string with the combined parameters.
+	// get an array with the parameters, removed spaces at begin and end.
 	this.CP = function(p)
 	{
+		// the first parameter is the command name. we remove it.
 		var txt="";
 		if(p.length>=2)
 		{
@@ -81,7 +82,9 @@ jBash = function()
 			}
 		}
 		txt=txt.trim();
-		return txt;
+		// now we split the text again.
+		var pr = txt.split(" ");
+		return pr;
 	}
 
 	// "execute" a line
@@ -248,7 +251,7 @@ jBash.CP = function(p) {return jBash.instance.CP(p);}
 jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) {jBash.instance.showCommandList();});
 jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
 jBash.registerCommand("dir", "Show file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php');});
-jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.CP(params));});
-jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.CP(params));});
-jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.CP(params));});
+jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.CP(params)[0]);});
+jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.CP(params)[0]);});
+jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.CP(params)[0]);});
 
