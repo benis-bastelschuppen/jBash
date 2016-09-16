@@ -19,6 +19,7 @@ jBash = function()
 	var _outerScreen = null;
 	var _screen = null;
 	var _input = null;
+	var _downloader = null;
 	var _startpage = null;
 	var _commands = Array();
 
@@ -26,7 +27,7 @@ jBash = function()
 	{
 		var shellWidth = jBash.ShellText.length * jBash.ShellCharacterWidth;
 		_outerScreen = $(screenID);
-		_outerScreen.html("<div id='jBashInnerScreen'></div><table border='0' style='width: 100%;'><tr><td style='width:"+shellWidth+"px;'>"+jBash.ShellText+"</td><td style='width:*;'><input id='jBashInnerInput' type='text' /></td></tr></table>");
+		_outerScreen.html("<a download id='jBashHiddenDownloadItem' style='display:none;'></a><div id='jBashInnerScreen'></div><table border='0' style='width: 100%;'><tr><td style='width:"+shellWidth+"px;'>"+jBash.ShellText+"</td><td style='width:*;'><input id='jBashInnerInput' type='text' /></td></tr></table>");		
 		_screen = $('#jBashInnerScreen');
 		_input = $('#jBashInnerInput');
 
@@ -106,6 +107,21 @@ jBash = function()
 			return;
 		_screen.html(_screen.html()+text+"<br />");
 		_bottom();
+	};
+
+	// try to download a file.
+	this.downloadURL=function(url) 
+	{
+		if(url==null || url=="")
+		{
+			_addLine("No page given for download.");
+			return;
+		}
+
+		_addLine("Trying to download {"+url+"}..");
+	        $('#jBashHiddenDownloadItem').attr('href',url);
+	        $('#jBashHiddenDownloadItem').html(url);
+		$("a#jBashHiddenDownloadItem")[0].click();
 	};
 
 	// load a local page.
@@ -212,4 +228,5 @@ jBash.registerCommand("cmd", "Show registered jBash commands.", function(params)
 jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
 jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(params[1]);});
 jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(params[1]);});
+jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(params[1]);});
 
