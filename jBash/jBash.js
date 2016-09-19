@@ -179,11 +179,14 @@ jBash = function()
 		if(_screen==null)
 			return;
 
-		if(!force)
+		if(!force)		
 			pagename = _parseFileName(pagename);
 		
 		if(pagename == -1)
 			return;
+
+		if(!force)
+			pagename="index/"+pagename;
 
 		// load the page.
 		jQuery.get(pagename, function(data) 
@@ -261,8 +264,8 @@ jBash.GP = function(p) {return jBash.instance.getParams(p);}
 // register some commands.
 jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) {jBash.instance.showCommandList();});
 jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
-jBash.registerCommand("dir", "Show file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php');});
-jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage("index/"+jBash.GP(params)[0]);});
-jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage("index/"+jBash.GP(params)[0]);});
-jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL("index/"+jBash.GP(params)[0]);});
+jBash.registerCommand("dir", "Show file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php', true);});
+jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
+jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
+jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.GP(params)[0]);});
 
