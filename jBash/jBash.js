@@ -174,12 +174,14 @@ jBash = function()
 	};
 
 	// load a local page.
-	var _loadPage = function(pagename)
+	var _loadPage = function(pagename, force)
 	{
 		if(_screen==null)
 			return;
 
-		pagename = _parseFileName(pagename);
+		if(!force)
+			pagename = _parseFileName(pagename);
+		
 		if(pagename == -1)
 			return;
 
@@ -191,7 +193,7 @@ jBash = function()
 		})
 		.fail(function() {_addLine("Could not load {"+pagename+"}. I am very sorry.");});
 	};
-	this.loadPage = function(pagename) {_loadPage(pagename);};
+	this.loadPage = function(pagename, force) {_loadPage(pagename, force);};
 
 	// clear the screen
 	this.cls = function()
@@ -260,7 +262,7 @@ jBash.GP = function(p) {return jBash.instance.getParams(p);}
 jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) {jBash.instance.showCommandList();});
 jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
 jBash.registerCommand("dir", "Show file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php');});
-jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
-jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
-jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.GP(params)[0]);});
+jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage("index/"+jBash.GP(params)[0]);});
+jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage("index/"+jBash.GP(params)[0]);});
+jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL("index/"+jBash.GP(params)[0]);});
 

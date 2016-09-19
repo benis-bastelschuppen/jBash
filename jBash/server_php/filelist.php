@@ -1,6 +1,8 @@
 <?php
 
-if ($handle = opendir('./../../')) {
+$dir="./../../index/";
+
+if ($handle = opendir($dir)) {
     echo "<br /><table border='0'><tr><td>B.O.S.S. root directory:<br><hr></td></tr>";
 
     /* This is the correct way to loop over the directory. */

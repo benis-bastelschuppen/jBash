@@ -1,6 +1,6 @@
 For the command "dir", the following must be matched:
-"dir" loads the file jBash/server_php/filelist.php,
-which shows the files in the directory above the jBash directory.
+"dir" loads the file ./../jBash/server_php/filelist.php,
+which shows the files in the directory "index" in the same directory like the jBash directory.
 
 So, you CAN move jBash.js, but not all commands will work then.
 Just leave it there and everything is ok.
