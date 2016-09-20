@@ -57,7 +57,6 @@ jBash = function()
 		// [edit] cannot click links with that.		
 		// _input.focusout(function(){if(jBash.ScrollWithBody==true){_input.focus();}});
 	};
-
 	this.focus = function() {if(_input!=null) _input.focus();};
 
 	// scroll to the bottom of an element.
@@ -102,6 +101,7 @@ jBash = function()
 		_addLine(jBash.ShellText+'&nbsp;<span class="jBashCmd">'+text+'</span>');
 		_parseLine(text);
 	};
+	this.DoLine = function(text) {_doLine(text);};
 
 	// parse a text line and call the appropiate function.
 	var _parseLine = function(text)
@@ -166,6 +166,13 @@ jBash = function()
 		return pagename;
 	}
 
+	var _download = function(url)
+	{
+	        $('#jBashHiddenDownloadItem').attr('href',url);
+	        $('#jBashHiddenDownloadItem').html(url);
+		$("a#jBashHiddenDownloadItem")[0].click();
+	};
+
 	// try to download a file.
 	this.downloadURL=function(url) 
 	{
@@ -174,9 +181,18 @@ jBash = function()
 			return;
 
 		_addLine("Trying to download {"+url+"}..");
-	        $('#jBashHiddenDownloadItem').attr('href','index/'+url);
-	        $('#jBashHiddenDownloadItem').html('index/'+url);
-		$("a#jBashHiddenDownloadItem")[0].click();
+		_download('index/'+url);
+	};
+
+	// ..from the UPLOADS dir.
+	this.downloadFile=function(url) 
+	{
+		url=_parseFileName(url);
+		if(url == -1)
+			return;
+
+		_addLine("Trying to download {"+url+"}..");
+		_download('UPLOADS/'+url);
 	};
 
 	// load a local page.
@@ -274,5 +290,5 @@ jBash.registerCommand("ls", "Linux style for {dir}.", function(params) {jBash.in
 jBash.registerCommand("dir", "Show public file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php', true);});
 jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
 jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
-jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.GP(params)[0]);});
+jBash.registerCommand("get", "Download a file to your computer.<br />This is for the files which you can see with {<span class='jBashCmd'>dir/ls</span>} and load with {<span class='jBashCmd'>load/l</span>}.", function(params){jBash.instance.downloadURL(jBash.GP(params)[0]);});
 
