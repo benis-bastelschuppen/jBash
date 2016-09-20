@@ -27,7 +27,7 @@ jBash = function()
 	{
 		var shellWidth = jBash.ShellText.length * jBash.ShellCharacterWidth;
 		_outerScreen = $(screenID);
-		_outerScreen.html("<a download id='jBashHiddenDownloadItem' style='display:none;'></a><div id='jBashInnerScreen'></div><table border='0' style='width: 100%;'><tr><td style='width:"+shellWidth+"px;'>"+jBash.ShellText+"</td><td style='width:*;'><input id='jBashInnerInput' type='text' /></td></tr></table>");		
+		_outerScreen.html("<a download id='jBashHiddenDownloadItem' style='display:none;'></a><div id='jBashInnerScreen'></div><table border='0' style='width: 100%;'><tr onclick='jBash.instance.focus();'><td style='width:"+shellWidth+"px;'>"+jBash.ShellText+"</td><td style='width:*;'><input id='jBashInnerInput' type='text' /></td></tr></table>");		
 		_screen = $('#jBashInnerScreen');
 		_input = $('#jBashInnerInput');
 
@@ -54,8 +54,11 @@ jBash = function()
 		});
 
 		// prevent input from loosing the focus, but only if the console covers the whole page.
-		_input.focusout(function(){if(jBash.ScrollWithBody==true){_input.focus();}});
+		// [edit] cannot click links with that.		
+		// _input.focusout(function(){if(jBash.ScrollWithBody==true){_input.focus();}});
 	};
+
+	this.focus = function() {if(_input!=null) _input.focus();};
 
 	// scroll to the bottom of an element.
 	var _bottom=function()
@@ -67,6 +70,7 @@ jBash = function()
 			$("body").scrollTop($("body")[0].scrollHeight);
 		else		
 			_outerScreen.scrollTop(_outerScreen[0].scrollHeight);
+		_input.focus();
 	};
 	this.Bottom = function() {_bottom();};
 
