@@ -66,9 +66,12 @@ jBash = function()
 			return;
 
 		if(jBash.ScrollWithBody == true)
-			$("body").scrollTop($("body")[0].scrollHeight);
-		else		
+		{
+			window.scrollTo(0,document.body.scrollHeight);
+		// [does not work with firefox] 	$("body").scrollTop($("body")[0].scrollHeight);
+		}else{		
 			_outerScreen.scrollTop(_outerScreen[0].scrollHeight);
+		}
 		_input.focus();
 	};
 	this.Bottom = function() {_bottom();};
