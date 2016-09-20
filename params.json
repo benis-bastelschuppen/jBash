@@ -1,6 +1,6 @@
 {
   "name": "jBash",
-  "tagline": "JavaScript \"Hacker Console\"-Website, can be extended to your needs. Needs jQuery.",
-  "body": "### Welcome to jBash\r\njBash is a JavaScript \"website\" for simulating a linux style console in the browser.\r\nThere are some built in commands like \"load\" and \"dir\" and you can easily attach new commands.\r\n\r\nInstead of running apps, you can load pages directly into the console. \r\n(These pages are located in the index-directory of your server.)\r\n\r\nLook on my homeserver, there is the system up and running.\r\nhttp://ben0bi.homenet.org\r\n\r\nThis page is just here to show you this image:\r\n![jBash Screenshot](http://ben0bi.homenet.org/jBash.png)\r\n[jBash Screenshot Full View](http://ben0bi.homenet.org/jBash.png)\r\n\r\nHave Fun! DON'T FORGET to have fun.",
+  "tagline": "JavaScript \"Hacker Console\"-Website, can be extended to your needs.",
+  "body": "### Welcome to jBash\r\njBash is a JavaScript and jQuery-based \"website\" for simulating a linux style console in the browser.\r\nThere are some built in commands like \"load\" and \"dir\" and you can easily attach new commands.\r\n\r\nInstead of running apps, you can load pages directly into the console.\r\n\r\nLook on my homeserver, there is the system up and running.\r\nhttp://ben0bi.homenet.org\r\n\r\nThis page is just here to show you this image:\r\n![jBash Screenshot](http://ben0bi.homenet.org/jBash.png)\r\n[jBash Screenshot Full View](http://ben0bi.homenet.org/jBash.png)\r\n\r\nHave Fun! DON'T FORGET to have fun.",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
