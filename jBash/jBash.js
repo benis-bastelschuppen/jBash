@@ -68,6 +68,7 @@ jBash = function()
 		else		
 			_outerScreen.scrollTop(_outerScreen[0].scrollHeight);
 	};
+	this.Bottom = function() {_bottom();};
 
 	// get an array with the parameters, removed spaces at begin and end.
 	this.getParams = function(p)
@@ -129,6 +130,7 @@ jBash = function()
 		_screen.html(_screen.html()+text+"<br />");
 		_bottom();
 	};
+	this.AddLine = function(text) {_addLine(text);};
 
 	// get filename without ../
 	var _parseFileName = function(pagename)
@@ -168,8 +170,8 @@ jBash = function()
 			return;
 
 		_addLine("Trying to download {"+url+"}..");
-	        $('#jBashHiddenDownloadItem').attr('href',url);
-	        $('#jBashHiddenDownloadItem').html(url);
+	        $('#jBashHiddenDownloadItem').attr('href','index/'+url);
+	        $('#jBashHiddenDownloadItem').html('index/'+url);
 		$("a#jBashHiddenDownloadItem")[0].click();
 	};
 
@@ -223,11 +225,11 @@ jBash = function()
 		txt+="<tr><td colspan='3'>Registered jBash commands:<hr></td></tr>";
 		for(var i=0;i<_commands.length;i++)
 		{
-			txt+="<tr><td class='jBashCmd'>";
+			txt+="<tr><td class='jBashCmd' valign='top'>";
 			txt+=_commands[i].Name();
-			txt+="</td><td>";
+			txt+="</td><td valign='top'>";
 			txt+=": ";
-			txt+="</td><td>";
+			txt+="</td><td valign='top'>";
 			txt+=_commands[i].Description();
 			txt+="</td></tr>";
 		};
@@ -264,7 +266,8 @@ jBash.GP = function(p) {return jBash.instance.getParams(p);}
 // register some commands.
 jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) {jBash.instance.showCommandList();});
 jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
-jBash.registerCommand("dir", "Show file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php', true);});
+jBash.registerCommand("ls", "Linux style for {dir}.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php', true);});
+jBash.registerCommand("dir", "Show public file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php', true);});
 jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
 jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
 jBash.registerCommand("download", "Download a file to your computer.", function(params){jBash.instance.downloadURL(jBash.GP(params)[0]);});

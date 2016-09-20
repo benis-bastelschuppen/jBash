@@ -1,6 +1,10 @@
-For the command "dir", the following must be matched:
-"dir" loads the file ./../jBash/server_php/filelist.php,
-which shows the files in the directory "index" in the same directory like the jBash directory.
+Please use exactly this directory setting:
 
-So, you CAN move jBash.js, but not all commands will work then.
-Just leave it there and everything is ok.
+index.html <- call jBash
+style.css  <- website style
+jBash/
+	..jBash files..
+index/
+	..your files for the public..
+	..this files can be accessed by "load" and "download"..
+
