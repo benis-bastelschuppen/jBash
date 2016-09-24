@@ -1,0 +1,26 @@
+{
+	"__comment": "DO NOT CHANGE THE VARIABLE NAMES! (the keys)",
+
+	"__comment": "The FULL upload directory on the server, like /var/www/html/UPLOADS or C:/xampp/html/UPLOADS.",
+	"REAL_UPLOAD_DIR": "/var/www/html/UPLOADS/",
+
+	"__comment": "Where to go for the index.html, seen from the php dir, and from there to index, UPLOADS and other directories.",
+	"relative_dir_from_php_dir": "./../../",
+
+	"__comment": "The directory with the public pages, seen from the index.html dir, used with [load], [dir] and [download].",
+	"__comment": "Also used with relative_dir_from_php_dir.",
+	"relative_public_pages_dir": "index/",
+
+	"__comment": "The directory with the uploaded files, seen from the index.html dir, used with [uploads], [get] and [put].",
+	"__comment": "Also used with relative_dir_from_php_dir.",
+	"relative_uploaded_files_dir": "UPLOADS/",
+
+	"__comment": "The directory with the manual pages for the commands, seen from the index.html dir, used with [man].",
+	"__comment": "If there is no man page found, it will show the command description which you also see with [cmd].",
+	"relative_manual_pages_dir": "manuals/",
+
+	"__comment": "The directory with the php files, seen from index.html",
+	"relative_php_directory": "jBash/server_php/",
+
+	"__comment":""
+}

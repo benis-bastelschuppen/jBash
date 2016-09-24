@@ -1,9 +1,20 @@
 <?php
+require('configurationLoader.php');
+$json=loadConfiguration();
+$rootpath=$json["relative_dir_from_php_dir"];
+$uploadpath=$json["relative_uploaded_files_dir"];
+
+$dir = $rootpath.$uploadpath;
+
+// maybe get delete link.
+$delete = false;
+$var = strtolower($_GET['var']);
+if($var=="delete")
+	$delete = true;
+
 // CONFIGURATION
 // allowed file types without . and separated by space. "" for all files allowed.
 $allowedfiletypes="";
-// true for bigger font
-$bigfont=false;
 //ENDOF CONFIGURATION
 
 function filelist($directory, $deletelink)
@@ -22,8 +33,9 @@ function filelist($directory, $deletelink)
 		.tbl_txt {width: 30%;text-align:left;}
 		</style>
 		');
-	echo("<h1>Uploads:</h1><hr />");
-	echo('<table class="tbl"  border="0">');
+
+	echo ("<hr><table border='0' class='tbl'>");
+
 	foreach ($alledateien as $datei)
 	{
 
@@ -67,7 +79,7 @@ function filelist($directory, $deletelink)
 	echo('</table>');
 	if($count<=0)
 		echo "There are no files now.";
-	echo('<hr />');
+	echo('<hr>');
 }
 
 function deletefile($directory,$file)
@@ -104,6 +116,6 @@ function filetypeallowed($d)
 	return false;
 }
 
-
-filelist("./../../UPLOADS/",false);
+// show the file list.
+filelist($dir,$delete);
 ?>

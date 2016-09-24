@@ -11,7 +11,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="jBash/jBash.js"></script>
 <script>
-	jBash.initialize("#jbashscreen", "ben0bi.html");
+	jBash.initialize("#jbashscreen", "index/ben0bi.html");
+
+	jBash.registerCommand("hello", "Shows a hello text.", function(params) {jBash.instance.AddLine("Hello World!");});
 </script>
 </body>
 </html>

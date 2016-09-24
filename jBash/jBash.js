@@ -23,6 +23,11 @@ jBash = function()
 	var _startpage = null;
 	var _commands = Array();
 
+	// directories
+	var _dir_uploads = "";
+	// var _dir_pages = ""; // this one is global
+	//var _dir_php = ""; // this one is global.
+
 	this.initialize = function(screenID, startpage)
 	{
 		var shellWidth = jBash.ShellText.length * jBash.ShellCharacterWidth;
@@ -31,12 +36,28 @@ jBash = function()
 		_screen = $('#jBashInnerScreen');
 		_input = $('#jBashInnerInput');
 
-		// load the start page if one is given.
-		if(startpage != null && startpage !="")
+		// load configuration
+		$.getJSON( jBash.configFile, function( data ) 
 		{
-			_startpage = startpage;
-			_loadPage(startpage);
-		}
+			$.each( data, function( key, val ) 
+			{
+				switch(key)
+				{
+					case "relative_uploaded_files_dir": _dir_uploads = val; break;
+					case "relative_public_pages_dir": jBash._dir_pages = val; break;
+					case "relative_php_directory": jBash._dir_php = val; break;
+					case "relative_manual_pages_dir": jBash._dir_manuals = val; break;
+					default:
+						break;
+				}
+  			});
+    			console.log("jBash configuration loaded.");
+			_finishInitialize(startpage);
+		}).fail(function(e)
+		{
+			console.log("jBash: Failed to load configuration file "+jBash.configFile+".");
+			_finishInitialize(startpage);
+		});
 
 		// catch enter and parse command.
 		_input.keypress(function(e)
@@ -57,6 +78,19 @@ jBash = function()
 		// [edit] cannot click links with that.		
 		// _input.focusout(function(){if(jBash.ScrollWithBody==true){_input.focus();}});
 	};
+
+	// finish the initialization after json loading.
+	var _finishInitialize = function(startpage)
+	{
+		// load the start page if one is given.
+		if(startpage != null && startpage !="")
+		{
+			_startpage = startpage;
+			_loadPage("",startpage,true);
+		}
+	};
+
+	// set focus on the input.
 	this.focus = function() {if(_input!=null) _input.focus();};
 
 	// scroll to the bottom of an element.
@@ -129,13 +163,20 @@ jBash = function()
 		_parseLine(text);	
 	};
 
-	// add a text line to the output screen.
-	var _addLine = function(text)
+	// add a text without br to the output screen.
+	var _addText = function(text)
 	{
 		if(_screen==null)
 			return;
-		_screen.html(_screen.html()+text+"<br />");
-		_bottom();
+		_screen.html(_screen.html()+text);
+		_bottom();	
+	}
+	this.AddText = function(text) {_addText(text);};
+
+	// add a text line to the output screen.
+	var _addLine = function(text)
+	{
+		_addText(text+"<br />");
 	};
 	this.AddLine = function(text) {_addLine(text);};
 
@@ -184,7 +225,7 @@ jBash = function()
 			return;
 
 		_addLine("Trying to download {"+url+"}..");
-		_download('index/'+url);
+		_download(jBash._dir_pages+url);
 	};
 
 	// ..from the UPLOADS dir.
@@ -195,11 +236,49 @@ jBash = function()
 			return;
 
 		_addLine("Trying to download {"+url+"}..");
-		_download('UPLOADS/'+url);
+		_download(_dir_uploads+url);
+	};
+
+	// same as loadpage but it will show a short command description if the manual was not found.
+	this.loadManual = function(pagename)
+	{
+		pagename = pagename.toLowerCase();
+		if(_screen==null)
+			return;
+
+		if(pagename=="" || pagename==null)
+			pagename=jBash._man_command_name;
+
+		var path = jBash._dir_manuals + pagename + ".html";
+		// load the page.
+		jQuery.get(path, function(data) 
+		{
+			_addLine(data);
+		})
+		.fail(function() 
+		{
+			var found = null;
+			for(var i=0;i<_commands.length;i++)
+			{
+				if(pagename==_commands[i].Name().toLowerCase())
+				{
+					found = _commands[i];
+				}
+			};
+			
+			if(found==null)
+			{
+				_addLine("The command {<span class='jBashCmd'>"+pagename+"</span>} does not exist.");
+				return;
+			}
+			
+			_addLine("<br /><span class='jBashCmd'>"+pagename+"</span>: "+found.Description());
+			_addLine("<small>No manual file was found, this is the short description.</small><br />");
+		});
 	};
 
 	// load a local page.
-	var _loadPage = function(pagename, force)
+	var _loadPage = function(directory,pagename, force, endfunction)
 	{
 		if(_screen==null)
 			return;
@@ -210,18 +289,45 @@ jBash = function()
 		if(pagename == -1)
 			return;
 
-		if(!force)
-			pagename="index/"+pagename;
+		var path=directory+pagename;
 
 		// load the page.
-		jQuery.get(pagename, function(data) 
+		jQuery.get(path, function(data) 
 		{
 		    //alert(data);
-			_addLine(data);
+			_addText(data);
+			if(endfunction!=null)
+				endfunction();
+			else
+				_addLine(""); // "closing" br
 		})
-		.fail(function() {_addLine("Could not load {"+pagename+"}. I am very sorry.");});
+		.fail(function() 
+		{
+			_addLine("Could not load {"+pagename+"}. I am very sorry.");
+			if(endfunction!=null)
+				endfunction();
+		});
 	};
-	this.loadPage = function(pagename, force) {_loadPage(pagename, force);};
+	this.loadPage = function(directory,pagename, force) {_loadPage(directory, pagename, force, null);};
+	this.loadPageExtended = function(directory, pagename, force, endfunction) {_loadPage(directory,pagename, force, endfunction);};
+
+	// enable or disable input
+	this.enableMe = function(enabled)
+	{
+		if(_input==null || _screen==null)
+			return;
+
+		if(enabled==true)
+		{
+			_input.removeAttr('disabled');
+			$("#jBashInnerScreen").removeClass('jBash_disabled');
+			$("#jBashInnerScreen *").removeClass('jBash_disabled');
+		}else{
+			_input.attr('disabled', 'disabled');
+			$("#jBashInnerScreen").addClass('jBash_disabled');
+			$("#jBashInnerScreen *").addClass('jBash_disabled');
+		}
+	};
 
 	// clear the screen
 	this.cls = function()
@@ -261,6 +367,100 @@ jBash = function()
 		_addLine(txt);
 	};
 
+// UPLOAD STUFF
+	var _uploadCounter = 1;
+	var _uploadFormId = 0;
+
+	// handle progress of uploading by putting dots to the console.
+	this.UploadProgressHandlingFunction = function(e)
+	{
+		if(!e.lengthComputable)
+			return;
+		
+		var percent = 0.0+((100.0 / e.total)*e.loaded);
+		if(percent >= _uploadCounter*10)
+		{
+			_addText(".");
+			_uploadCounter+=1;
+		}
+	};
+
+	// called on click on the upload function.
+	this.upload_button_function = function(uploadFormId)
+	{
+ 		var formData = new FormData($('#upload_form_'+uploadFormId)[0]);
+    		$.ajax({
+        		url: jBash._dir_php+'upload_file.php',  //Server script to process data
+        		type: 'POST',
+        		xhr: function() // Custom XMLHttpRequest
+			{
+	         		var myXhr = $.ajaxSettings.xhr();
+			        if(myXhr.upload)
+				{
+					_addText('Uploading');
+			                myXhr.upload.addEventListener('progress',jBash.instance.UploadProgressHandlingFunction, false);
+			        }
+		         	return myXhr;
+			},
+		        //Ajax events
+		        beforeSend: function() 
+			{
+				jBash.instance.enableMe(false);
+			},
+			success: function(data) {
+				for(var i=0;i<10-_uploadCounter;i++)
+					_addText('.');
+
+				var result = data.replace("@!err!@","");
+				if(result!=data)
+				{	
+					_addLine('<span class="error">failed</span>.<br />'+result);
+				}else{				
+					$('#upload_form_'+uploadFormId).remove();
+					_addLine('done.<br />'+result);
+				}
+				_uploadCounter=1;
+				jBash.instance.enableMe(true);
+				_bottom();
+				},
+		        error: function() {jBash.instance.enableMe(true);},
+		        // Form data
+			data: formData,
+        		//Options to tell jQuery not to process data or worry about content-type.
+        		cache: false,
+        		contentType: false,
+        		processData: false
+    		});
+	};
+
+	// set the label of the appropriate input label.
+	this.upload_changed = function(fileName,uploadFormId)
+	{
+		var lbl=$('#upload_label_'+uploadFormId);
+		fileName=fileName.split("\\").pop();
+
+		if( fileName )
+			lbl.html(fileName);
+		else
+			lbl = "Select a file..";
+	};
+
+	// show a new upload form.
+	this.PutFileCmd = function()
+	{
+		// add input field.
+		var txt='<form id="upload_form_'+_uploadFormId+'" enctype="multipart/form-data" action="" method="post">';
+		txt+='<input type="hidden" id="max_file_size" name="max_file_size" value="1000000000" />';
+		txt+='Your File:<input id="thefile" name="thefile" type="file" class="inputfile" onchange="jBash.instance.upload_changed($(this).val(),'+_uploadFormId+');"/>';
+		txt+='<label for="thefile" class="btn" id="upload_label_'+_uploadFormId+'">Select a file..</label>';
+		txt+='<input onclick="jBash.instance.upload_button_function('+_uploadFormId+');" type="button" value="Upload" class="btn" />';
+		txt+='</form>';
+		_addText(txt);
+
+		_uploadFormId += 1;
+	};
+// ENDOF UPLOAD STUFF
+
 	$(document).ready(function() 
 	{
 		// set the focus for the input.
@@ -269,7 +469,20 @@ jBash = function()
 	});
 };
 
+// name of the manual command, used to load its page when no parameter is given.
+jBash._man_command_name = "man";
+
+// relative dir to the php files, loaded with json.
+jBash._dir_php = "";
+// relative dir to the public non-upload pages, loaded with json.
+jBash_dir_pages = "";
+// relative dir to the manual pages, loaded with json.
+jBash._dir_manuals = "";
+
 jBash.instance = new jBash();
+
+// relative path to the config file, from seen from index.html."
+jBash.configFile ="jBash_config.json";
 
 // If this is true, it scrolls the whole body, else it scrolls the div. Div must have specific height then.
 // Div can NOT have specific height when scrolling with the body.
@@ -287,11 +500,37 @@ jBash.Parse = function(text) {jBash.instance.Parse(text);};
 jBash.GP = function(p) {return jBash.instance.getParams(p);}
 
 // register some commands.
-jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) {jBash.instance.showCommandList();});
-jBash.registerCommand("cls", "Clear the screen.", function(params) {jBash.instance.cls();});
-jBash.registerCommand("ls", "Linux style for {dir}.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php', true);});
-jBash.registerCommand("dir", "Show public file list.", function(params) {jBash.instance.loadPage('jBash/server_php/filelist.php', true);});
-jBash.registerCommand("l", "Short for {load}.",function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
-jBash.registerCommand("load","Load a file. E.g. {load myfile.txt}", function(params) {jBash.instance.loadPage(jBash.GP(params)[0]);});
-jBash.registerCommand("get", "Download a file to your computer.<br />This is for the files which you can see with {<span class='jBashCmd'>dir/ls</span>} and load with {<span class='jBashCmd'>load/l</span>}.", function(params){jBash.instance.downloadURL(jBash.GP(params)[0]);});
+jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) 
+	{jBash.instance.showCommandList();});
+jBash.registerCommand(jBash._man_command_name, "Show manual for a command. E.g. {<span class='jBashCmd'>man cmd</span>}", function(params)
+	{jBash.instance.loadManual(jBash.GP(params)[0]);});
+jBash.registerCommand("cls", "Clear the screen.", function(params)
+	{jBash.instance.cls();});
+jBash.registerCommand("ls", "Linux style for {<span class='jBashCmd'>dir</span>}.", function(params)
+	{jBash.instance.loadPage(jBash._dir_php,'filelist.php', false);});
+jBash.registerCommand("dir", "Show public file list.", function(params) 
+	{jBash.instance.loadPage(jBash._dir_php,'filelist.php', false);});
+jBash.registerCommand("l", "Short for {<span class='jBashCmd'>load</span>}.",function(params)
+	{jBash.instance.loadPage(jBash._dir_pages, jBash.GP(params)[0],false);});
+jBash.registerCommand("load","Load a file into the console.<br />E.g. {<span class='jBashCmd'>load myfile.txt</span>}", function(params)
+	{jBash.instance.loadPage(jBash._dir_pages, jBash.GP(params)[0],false);});
+jBash.registerCommand("download", "Download a file to your computer.<br />E.g. {<span class='jBashCmd'>download page.html</span>}<br />This is for the files which you can see with {<span class='jBashCmd'>dir/ls</span>} and load with {<span class='jBashCmd'>load/l</span>}.", function(params)
+	{jBash.instance.downloadURL(jBash.GP(params)[0]);});
+
+jBash.registerCommand("get", "Download a file to your computer.<br />E.g. {<span class='jBashCmd'>get file.zip</span>}<br />This is for the files which you can see with {<span class='jBashCmd'>uploads</span>}.<br />You can also click on them to download.", function(params)
+	{jBash.instance.downloadFile(jBash.GP(params)[0]);});
+
+// show a form to upload a file.
+jBash.registerCommand("put", "Upload a file.<br />Creates a file selector and upload button.", function(params)
+	{jBash.instance.PutFileCmd();});
+
+// show uploaded file list (and an upload file form.)
+jBash.registerCommand("uploads", "Show uploaded files.", function(params) 
+{
+	var p= jBash.GP(params)[0];
+	jBash.instance.AddText("<h1>Uploads:</h1>");
+	jBash.instance.loadPageExtended(jBash._dir_php,"uploaded_files_list.php?var="+p,false, jBash.instance.PutFileCmd);
+});
+
+
 

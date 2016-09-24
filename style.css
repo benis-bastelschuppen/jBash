@@ -63,3 +63,55 @@ hr
 	background-color: transparent;
 }
 
+.error
+{
+	color: #A00;
+}
+
+/* disabled means, no click on it is allowed. */
+.jBash_disabled
+{
+	color: #666;
+	pointer-events:none;
+}
+
+a.jBash_disabled
+{
+	color: #999;
+	pointer-events:none;
+}
+
+/* hide an input type=file thingie. */
+.inputfile 
+{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+/* custom button style */
+.btn
+{
+	padding: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color: #3A3;
+	background-color: #224;
+	border: 2px solid #3A3;
+	border-left: 2px solid #6A6;
+	border-top: 2px solid #6A6;
+	font-family: Courier, monospace;
+	font-size: 12pt;
+}
+
+.btn:focus, .btn:hover
+{
+	background-color: #446;	
+	border: 2px solid #3F3;
+	border-left: 2px solid #6F6;
+	border-top: 2px solid #6F6;
+	cursor: pointer;
+}
