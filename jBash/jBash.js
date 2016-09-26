@@ -514,10 +514,10 @@ jBash.registerCommand("l", "Short for {<span class='jBashCmd'>load</span>}.",fun
 	{jBash.instance.loadPage(jBash._dir_pages, jBash.GP(params)[0],false);});
 jBash.registerCommand("load","Load a file into the console.<br />E.g. {<span class='jBashCmd'>load myfile.txt</span>}", function(params)
 	{jBash.instance.loadPage(jBash._dir_pages, jBash.GP(params)[0],false);});
-jBash.registerCommand("download", "Download a file to your computer.<br />E.g. {<span class='jBashCmd'>download page.html</span>}<br />This is for the files which you can see with {<span class='jBashCmd'>dir/ls</span>} and load with {<span class='jBashCmd'>load/l</span>}.", function(params)
+jBash.registerCommand("download", "Download a file from the public directory to your computer.", function(params)
 	{jBash.instance.downloadURL(jBash.GP(params)[0]);});
 
-jBash.registerCommand("get", "Download a file to your computer.<br />E.g. {<span class='jBashCmd'>get file.zip</span>}<br />This is for the files which you can see with {<span class='jBashCmd'>uploads</span>}.<br />You can also click on them to download.", function(params)
+jBash.registerCommand("get", "Download a file from the upload directory to your computer.", function(params)
 	{jBash.instance.downloadFile(jBash.GP(params)[0]);});
 
 // show a form to upload a file.
