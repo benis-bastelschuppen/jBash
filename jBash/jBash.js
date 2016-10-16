@@ -390,7 +390,7 @@ jBash = function()
 	{
  		var formData = new FormData($('#upload_form_'+uploadFormId)[0]);
     		$.ajax({
-        		url: jBash._dir_php+'upload_file.php',  //Server script to process data
+        		url: jBash._dir_php+'upload_file.php?formid='+uploadFormId,  //Server script to process data
         		type: 'POST',
         		xhr: function() // Custom XMLHttpRequest
 			{
@@ -434,9 +434,10 @@ jBash = function()
 	};
 
 	// set the label of the appropriate input label.
-	this.upload_changed = function(fileName,uploadFormId)
+	this.upload_changed = function(uFormId,fileName)
 	{
-		var lbl=$('#upload_label_'+uploadFormId);
+		console.log("Upload changed for "+uFormId+" -->file: "+fileName);
+		var lbl=$('#upload_label_'+uFormId);
 		fileName=fileName.split("\\").pop();
 
 		if( fileName )
@@ -451,8 +452,10 @@ jBash = function()
 		// add input field.
 		var txt='<form id="upload_form_'+_uploadFormId+'" enctype="multipart/form-data" action="" method="post">';
 		txt+='<input type="hidden" id="max_file_size" name="max_file_size" value="1000000000" />';
-		txt+='Your File:<input id="thefile" name="thefile" type="file" class="inputfile" onchange="jBash.instance.upload_changed($(this).val(),'+_uploadFormId+');"/>';
-		txt+='<label for="thefile" class="btn" id="upload_label_'+_uploadFormId+'">Select a file..</label>';
+		
+		txt+='Your File:<input id="thefile_'+_uploadFormId+'" name="thefile_'+_uploadFormId+'" type="file" class="inputfile" onchange="jBash.instance.upload_changed('+_uploadFormId+',$(this).val());" />';
+
+		txt+='<label for="thefile_'+_uploadFormId+'" class="btn" id="upload_label_'+_uploadFormId+'">Select a file..</label>';
 		txt+='<input onclick="jBash.instance.upload_button_function('+_uploadFormId+');" type="button" value="Upload" class="btn" />';
 		txt+='</form>';
 		_addText(txt);

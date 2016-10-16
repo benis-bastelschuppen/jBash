@@ -3,6 +3,7 @@ require('configurationLoader.php');
 $json=loadConfiguration();
 $rootpath=$json["relative_dir_from_php_dir"];
 $uploadpath=$json["relative_uploaded_files_dir"];
+$relativephpdir= $json["relative_php_directory"];
 
 $dir = $rootpath.$uploadpath;
 
@@ -17,7 +18,7 @@ if($var=="delete")
 $allowedfiletypes="";
 //ENDOF CONFIGURATION
 
-function filelist($directory, $deletelink)
+function filelist($directory, $deletelink, $relphpdir)
 {
 	$alledateien = scandir($directory);
 	$count=0;
@@ -47,7 +48,7 @@ function filelist($directory, $deletelink)
 			// show delete link
 			if($deletelink==1)
 			{
-				echo '<a href="index.php?deletefile='.$datei.'">[delete]</a>';
+				echo '<a href="'.$relphpdir.'delete_file.php?deletefile='.$datei.'">[delete]</a>';
 			}
 			// get filesize in a readable form
 			$f=filesize("$directory/$datei");
@@ -82,15 +83,6 @@ function filelist($directory, $deletelink)
 	echo('<hr>');
 }
 
-function deletefile($directory,$file)
-{
-	// directory without slash at end!
-	if(!unlink("$directory/$file"))
-		echo("Could not delete ".$file." | ");
-	else
-		echo($file." deleted! | ");
-}
-
 function filetypeallowed($d)
 {
 	global $allowedfiletypes;
@@ -117,5 +109,5 @@ function filetypeallowed($d)
 }
 
 // show the file list.
-filelist($dir,$delete);
+filelist($dir,$delete, $relativephpdir);
 ?>

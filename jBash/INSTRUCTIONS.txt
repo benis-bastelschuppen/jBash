@@ -7,4 +7,6 @@ jBash/
 index/
 	..your files for the public..
 	..this files can be accessed by "load" and "download"..
+manuals/
+	..for the description files used by the man command.
 

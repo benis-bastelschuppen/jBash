@@ -1,18 +1,19 @@
 <?php
 require('configurationLoader.php');
 $json=loadConfiguration();
-$dir=$json["REAL_UPLOAD_PATH"];
+$dir=$json["REAL_UPLOAD_DIR"];
 
 function upload($fulldir)
 {
+	$formid = $_GET['formid'];
+	$inputname="thefile_$formid";
 	// set this directory, no slash at end.!
 	//$fulldir = "/var/www/html/UPLOADS";
-
 	$text = "@!err!@File upload failed.";
 
-	if(isset($_FILES['thefile']['tmp_name']))
+	if(isset($_FILES[$inputname]['tmp_name']))
 	{
-		$fname=$_FILES['thefile']['name'];
+		$fname=$_FILES[$inputname]['name'];
 		// check if empty filename
 		if($fname!="")
 		{
@@ -24,11 +25,11 @@ function upload($fulldir)
 				if($fileend!=".jpg" && $fileend!="jpeg" && $fileend!=".png" && $fileend!=".gif" && $fileend!=".svg")
 				{		
 					//formular gesendet
-					if(!move_uploaded_file($_FILES['thefile']['tmp_name'],"$fulldir".$_FILES['thefile']['name']))
+					if(!move_uploaded_file($_FILES[$inputname]['tmp_name'],"$fulldir".$_FILES[$inputname]['name']))
 					{
-			  			$text="@!err!@<span class='error'>Error while moving ".$_FILES['thefile']['name']." to the upload directory.</span>";
+			  			$text="@!err!@<span class='error'>Error while moving ".$_FILES[$inputname]['name']." to the upload directory.</span>";
 					}else{
-						$text="File ".$_FILES['thefile']['name']. " uploaded.";
+						$text="File ".$_FILES[$inputname]['name']. " uploaded.";
 					}
 				}else{
 					$text="@!err!@<span class='error'>Please upload IMAGE files to the <a href=\"../PLOG/index.php\">PLOG</a>.</span>";
