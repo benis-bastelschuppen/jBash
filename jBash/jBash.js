@@ -4,18 +4,24 @@
 	needs jQuery.
 */
 
-jBashObject = function(name, desc, func)
+// the directory to the manuals seen from the loading page.
+const JBASH_MANUAL_DIR = "manuals/";
+
+jBashObject = function(name, desc, func, isHidden = false)
 {
 	var _name = name;
 	var _func = func;
 	var _desc = desc;
+	var _hidden = isHidden;
 	this.Name = function() {return _name;};
 	this.Description = function() {return _desc;};
 	this.Func = function(params) {return _func(params);};
+	this.isHidden = function() {return _hidden;};
 };
 
 jBash = function()
 {
+	var me = this;
 	var _outerScreen = null;
 	var _screen = null;
 	var _input = null;
@@ -24,10 +30,6 @@ jBash = function()
 	var _commands = Array();
 
 	// directories
-	var _dir_uploads = "";
-	// var _dir_pages = ""; // this one is global
-	//var _dir_php = ""; // this one is global.
-
 	this.initialize = function(screenID, startpage)
 	{
 		var shellWidth = jBash.ShellText.length * jBash.ShellCharacterWidth;
@@ -37,7 +39,7 @@ jBash = function()
 		_input = $('#jBashInnerInput');
 
 		// load configuration
-		$.getJSON( jBash.configFile, function( data ) 
+/*		$.getJSON( jBash.configFile, function( data ) 
 		{
 			$.each( data, function( key, val ) 
 			{
@@ -58,6 +60,8 @@ jBash = function()
 			console.log("jBash: Failed to load configuration file "+jBash.configFile+".");
 			_finishInitialize(startpage);
 		});
+*/
+_finishInitialize(startpage);
 
 		// catch enter and parse command.
 		_input.keypress(function(e)
@@ -73,21 +77,23 @@ jBash = function()
 				_input.focus();
 			}
 		});
-
-		// prevent input from loosing the focus, but only if the console covers the whole page.
-		// [edit] cannot click links with that.		
-		// _input.focusout(function(){if(jBash.ScrollWithBody==true){_input.focus();}});
+		
+		// focus on the input line.
+		_screen.click(function(e)
+		{
+			me.focus();
+		});
 	};
 
 	// finish the initialization after json loading.
 	var _finishInitialize = function(startpage)
 	{
 		// load the start page if one is given.
-		if(startpage != null && startpage !="")
+/*		if(startpage != null && startpage !="")
 		{
 			_startpage = startpage;
 			_loadPage("",startpage,true);
-		}
+		}*/
 	};
 
 	// set focus on the input.
@@ -98,7 +104,7 @@ jBash = function()
 	{
 		if(_outerScreen==null)
 			return;
-
+		
 		if(jBash.ScrollWithBody == true)
 		{
 			window.scrollTo(0,document.body.scrollHeight);
@@ -181,7 +187,7 @@ jBash = function()
 	this.AddLine = function(text) {_addLine(text);};
 
 	// get filename without ../
-	var _parseFileName = function(pagename)
+/*	var _parseFileName = function(pagename)
 	{
 		pagename=pagename.trim();
 		// remove / at begin.
@@ -209,8 +215,8 @@ jBash = function()
 		}
 		return pagename;
 	}
-
-	var _download = function(url)
+*/
+/*	var _download = function(url)
 	{
 	        $('#jBashHiddenDownloadItem').attr('href',url);
 	        $('#jBashHiddenDownloadItem').html(url);
@@ -238,7 +244,7 @@ jBash = function()
 		_addLine("Trying to download {"+url+"}..");
 		_download(_dir_uploads+url);
 	};
-
+*/
 	// same as loadpage but it will show a short command description if the manual was not found.
 	this.loadManual = function(pagename)
 	{
@@ -251,34 +257,38 @@ jBash = function()
 
 		var path = jBash._dir_manuals + pagename + ".html";
 		// load the page.
-		jQuery.get(path, function(data) 
-		{
-			_addLine(data);
-		})
-		.fail(function() 
-		{
-			var found = null;
-			for(var i=0;i<_commands.length;i++)
-			{
-				if(pagename==_commands[i].Name().toLowerCase())
+		$.ajax({
+			mimeType: 'text/plain; charset=x-user-defined',
+			url: path,
+			type: "GET",
+			dataType: "text",
+			cache: false,
+			success: function(data) {_addLine(data);},
+			error: function(data) {
+				// check if there is a command with this name and print out its description.
+				var found = null;
+				for(var i=0;i<_commands.length;i++)
 				{
-					found = _commands[i];
+					if(pagename==_commands[i].Name().toLowerCase())
+					{
+						found = _commands[i];
+					}
+				};
+			
+				if(found==null)
+				{
+					_addLine("The command {<span class='jBashCmd'>"+pagename+"</span>} does not exist.");
+					return;
 				}
-			};
 			
-			if(found==null)
-			{
-				_addLine("The command {<span class='jBashCmd'>"+pagename+"</span>} does not exist.");
-				return;
+				_addLine("<br /><span class='jBashCmd'>"+pagename+"</span>: "+found.Description());
+				_addLine("<small>No manual file was found, this is the short description.</small><br />");				
 			}
-			
-			_addLine("<br /><span class='jBashCmd'>"+pagename+"</span>: "+found.Description());
-			_addLine("<small>No manual file was found, this is the short description.</small><br />");
 		});
 	};
 
 	// load a local page.
-	var _loadPage = function(directory,pagename, force, endfunction)
+	/*var _loadPage = function(directory,pagename, force, endfunction)
 	{
 		if(_screen==null)
 			return;
@@ -310,7 +320,7 @@ jBash = function()
 	};
 	this.loadPage = function(directory,pagename, force) {_loadPage(directory, pagename, force, null);};
 	this.loadPageExtended = function(directory, pagename, force, endfunction) {_loadPage(directory,pagename, force, endfunction);};
-
+*/
 	// enable or disable input
 	this.enableMe = function(enabled)
 	{
@@ -338,11 +348,11 @@ jBash = function()
 	};
 
 	// register a command.
-	this.registerCommand = function(name, description, func)
+	this.registerCommand = function(name, description, func, isHidden = false)
 	{
 		name=name.replace(/</g, "&lt;");
 		name=name.replace(/>/g, "&gt;");
-		var cmd = new jBashObject(name, description, func);
+		var cmd = new jBashObject(name, description, func, isHidden);
 		_commands.push(cmd);
 	};
 
@@ -354,13 +364,16 @@ jBash = function()
 		txt+="<tr><td colspan='3'>Registered jBash commands:<hr></td></tr>";
 		for(var i=0;i<_commands.length;i++)
 		{
-			txt+="<tr><td class='jBashCmd' valign='top'>";
-			txt+=_commands[i].Name();
-			txt+="</td><td valign='top'>";
-			txt+=": ";
-			txt+="</td><td valign='top'>";
-			txt+=_commands[i].Description();
-			txt+="</td></tr>";
+			if(_commands[i].isHidden()==false)
+			{
+				txt+="<tr><td class='jBashCmd' valign='top'>";
+				txt+=_commands[i].Name();
+				txt+="</td><td valign='top'>";
+				txt+=": ";
+				txt+="</td><td valign='top'>";
+				txt+=_commands[i].Description();
+				txt+="</td></tr>";
+			}
 		};
 		txt+="<tr><td colspan='3'><hr></td></tr>";
 		txt+="</table>";
@@ -368,7 +381,7 @@ jBash = function()
 	};
 
 // UPLOAD STUFF
-	var _uploadCounter = 1;
+	/*var _uploadCounter = 1;
 	var _uploadFormId = 0;
 
 	// handle progress of uploading by putting dots to the console.
@@ -463,7 +476,7 @@ jBash = function()
 		_uploadFormId += 1;
 	};
 // ENDOF UPLOAD STUFF
-
+*/
 	$(document).ready(function() 
 	{
 		// set the focus for the input.
@@ -472,68 +485,88 @@ jBash = function()
 	});
 };
 
-// name of the manual command, used to load its page when no parameter is given.
-jBash._man_command_name = "man";
-
 // relative dir to the php files, loaded with json.
-jBash._dir_php = "";
+//jBash._dir_php = "";
 // relative dir to the public non-upload pages, loaded with json.
-jBash_dir_pages = "";
+//jBash_dir_pages = "";
 // relative dir to the manual pages, loaded with json.
-jBash._dir_manuals = "";
+jBash._dir_manuals = JBASH_MANUAL_DIR;
 
 jBash.instance = new jBash();
 
-// relative path to the config file, from seen from index.html."
+// relative path to the config file, seen from index.html."
 jBash.configFile ="jBash_config.json";
 
 // If this is true, it scrolls the whole body, else it scrolls the div. Div must have specific height then.
 // Div can NOT have specific height when scrolling with the body.
-jBash.ScrollWithBody = true;
+jBash.ScrollWithBody = false;
 
 // This is the text before anything, to emulate a user-like experience.
-jBash.ShellText = "root@trtf_server:";
+jBash.ShellText = ">";
 
 // How wide in pixels is a single character? Used to get the width of the ShellText-cell in the table.
 jBash.ShellCharacterWidth = 10;
 
 jBash.initialize = function(screenID, inputID) {jBash.instance.initialize(screenID,inputID);};
-jBash.registerCommand = function(name, description, func) {jBash.instance.registerCommand(name, description, func);};
+jBash.registerCommand = function(name, description, func, isHidden) {jBash.instance.registerCommand(name, description, func, isHidden);};
 jBash.Parse = function(text) {jBash.instance.Parse(text);};
 jBash.GP = function(p) {return jBash.instance.getParams(p);}
 
+// jump to an external link.
+jBash.LINK = function(params)
+{
+	p = jBash.GP(params);
+	var target = "";
+	if(p.length>0)
+	{
+		target = p[0];
+		if(p[0].toLowerCase()=="to" && p.length>1)
+			target = p[1];
+	}
+	window.location.href = target;
+}
+
+
 // register some commands.
+jBash.registerCommand("donate", "Please donate my work. Thank you.", function(params) {jBash.Parse("man donate");});
 jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) 
 	{jBash.instance.showCommandList();});
-jBash.registerCommand(jBash._man_command_name, "Show manual for a command. E.g. {<span class='jBashCmd'>man cmd</span>}", function(params)
-	{jBash.instance.loadManual(jBash.GP(params)[0]);});
+jBash.registerCommand("man", "Show manual for a command. E.g. {<span class='jBashCmd'>man cmd</span>}", function(params)
+	{
+		var jp = jBash.GP(params);
+		if(jp=="")
+		{
+			jBash.instance.loadManual("man");
+			return;
+		}
+		jBash.instance.loadManual(jp[0]);
+	});
 jBash.registerCommand("cls", "Clear the screen.", function(params)
 	{jBash.instance.cls();});
-jBash.registerCommand("ls", "Linux style for {<span class='jBashCmd'>dir</span>}.", function(params)
-	{jBash.instance.loadPage(jBash._dir_php,'filelist.php', false);});
-jBash.registerCommand("dir", "Show public file list.", function(params) 
-	{jBash.instance.loadPage(jBash._dir_php,'filelist.php', false);});
-jBash.registerCommand("l", "Short for {<span class='jBashCmd'>load</span>}.",function(params)
-	{jBash.instance.loadPage(jBash._dir_pages, jBash.GP(params)[0],false);});
-jBash.registerCommand("load","Load a file into the console.<br />E.g. {<span class='jBashCmd'>load myfile.txt</span>}", function(params)
-	{jBash.instance.loadPage(jBash._dir_pages, jBash.GP(params)[0],false);});
-jBash.registerCommand("download", "Download a file from the public directory to your computer.", function(params)
-	{jBash.instance.downloadURL(jBash.GP(params)[0]);});
+jBash.registerCommand("link", "A link to an external website.<br />E.g. {<span class='jBashCmd'>link to https://github.com</span>}", jBash.LINK);
+jBash.registerCommand("l", "Short for the <span class='jBashCmd'>link</span> command.", jBash.LINK,true);
 
-jBash.registerCommand("get", "Download a file from the upload directory to your computer.", function(params)
-	{jBash.instance.downloadFile(jBash.GP(params)[0]);});
+//jBash.registerCommand("dir", "Show public file list.", function(params) 
+//	{jBash.instance.loadPage(jBash._dir_php,'filelist.php', false);});
+//jBash.registerCommand("l", "Short for {<span class='jBashCmd'>load</span>}.",function(params)
+//	{jBash.instance.loadPage(jBash._dir_pages, jBash.GP(params)[0],false);});
+//jBash.registerCommand("load","Load a file into the console.<br />E.g. {<span class='jBashCmd'>load myfile.txt</span>}", function(params)
+//	{jBash.instance.loadPage(jBash._dir_pages, jBash.GP(params)[0],false);});
+//jBash.registerCommand("download", "Download a file from the public directory to your computer.", function(params)
+//	{jBash.instance.downloadURL(jBash.GP(params)[0]);});
+
+//jBash.registerCommand("get", "Download a file from the upload directory to your computer.", function(params)
+//	{jBash.instance.downloadFile(jBash.GP(params)[0]);});
 
 // show a form to upload a file.
-jBash.registerCommand("put", "Upload a file.<br />Creates a file selector and upload button.", function(params)
-	{jBash.instance.PutFileCmd();});
+//jBash.registerCommand("put", "Upload a file.<br />Creates a file selector and upload button.", function(params)
+//	{jBash.instance.PutFileCmd();});
 
 // show uploaded file list (and an upload file form.)
-jBash.registerCommand("uploads", "Show uploaded files.", function(params) 
+/*jBash.registerCommand("uploads", "Show uploaded files.", function(params) 
 {
 	var p= jBash.GP(params)[0];
 	jBash.instance.AddText("<h1>Uploads:</h1>");
 	jBash.instance.loadPageExtended(jBash._dir_php,"uploaded_files_list.php?var="+p,false, jBash.instance.PutFileCmd);
 });
-
-
-
+*/

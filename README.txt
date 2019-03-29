@@ -7,6 +7,10 @@ Version 1.0alpha
 
 Just make a div and load jQuery and jBash.
 
+You just need the jBash.js file. All the other files are nice-to-haves
+and not really important. All the overhead code is commented out and only
+te mostt important commands are registered.
+
 Then call 
 	jBash.initialize("#mydivid", "index/mystartpage.html");
 
