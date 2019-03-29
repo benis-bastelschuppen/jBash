@@ -26,13 +26,11 @@ param[1] = first "parameter"
 Use {cmd} to view all registered commands.
 	cmd
 
-You can load local files into the console with {l}:
-	l myfile.html
-This works only on the server (also localhost), not with file:/// !
-You can also load websites, but mostly they deny loading into iframes/objects.
-
 Clear the screen with {cls}:
 	cls
+
+newest: all the "more" functionality taken out (commented out) for
+extendable basic functionality.
 
 v1.0 brings even more functionality: 
 + uploading files: {put} and {uploads}
