@@ -2,10 +2,12 @@
 	jBash
 	a little console thingy for JavaScript.
 	needs jQuery.
+	
+	v2 with help and ? commands.
 */
 
 // the directory to the manuals seen from the loading page.
-const JBASH_MANUAL_DIR = "manuals/";
+const JBASH_MANUAL_DIR = "extern/jbash_manuals/";
 
 jBashObject = function(name, desc, func, isHidden = false)
 {
@@ -89,7 +91,7 @@ _finishInitialize(startpage);
 	var _finishInitialize = function(startpage)
 	{
 		// load the start page if one is given.
-/*		if(startpage != null && startpage !="")
+		/*if(startpage != null && startpage !="")
 		{
 			_startpage = startpage;
 			_loadPage("",startpage,true);
@@ -495,7 +497,7 @@ jBash._dir_manuals = JBASH_MANUAL_DIR;
 jBash.instance = new jBash();
 
 // relative path to the config file, seen from index.html."
-jBash.configFile ="jBash_config.json";
+//jBash.configFile ="jBash_config.json";
 
 // If this is true, it scrolls the whole body, else it scrolls the div. Div must have specific height then.
 // Div can NOT have specific height when scrolling with the body.
@@ -517,19 +519,26 @@ jBash.LINK = function(params)
 {
 	p = jBash.GP(params);
 	var target = "";
+	var mydir = "";
 	if(p.length>0)
 	{
 		target = p[0];
+		mydir = p[1];
 		if(p[0].toLowerCase()=="to" && p.length>1)
+		{
 			target = p[1];
+		}
 	}
 	window.location.href = target;
 }
 
-
 // register some commands.
 jBash.registerCommand("donate", "Please donate my work. Thank you.", function(params) {jBash.Parse("man donate");});
 jBash.registerCommand("cmd", "Show registered jBash commands.", function(params) 
+	{jBash.instance.showCommandList();});
+jBash.registerCommand("help", "Show registered jBash commands.", function(params) 
+	{jBash.instance.showCommandList();});
+jBash.registerCommand("?", "Show registered jBash commands.", function(params) 
 	{jBash.instance.showCommandList();});
 jBash.registerCommand("man", "Show manual for a command. E.g. {<span class='jBashCmd'>man cmd</span>}", function(params)
 	{
