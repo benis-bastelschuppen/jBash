@@ -13,6 +13,11 @@
 <script>
 	jBash.initialize("#jbashscreen");
 	jBash.instance.AddLine("Welcome to jBash.<br />Type 'cmd' for a list with all commands.");
+	jBash.instance.AddLine(' ');
+	jBash.instance.AddLine('jBash is a little console thingy for JavaScript.');
+	jBash.instance.AddLine("Simply use: jBash.initialize('#contentwindow')");
+	jBash.instance.AddLine("And: jBash.registercommand('commandname','short description', function(params){...})");
+	jBash.instance.AddLine(" ");
 	jBash.instance.AddLine('<a href="https://github.com/benis-bastelschuppen/jBash">jBash on github</a>');
 
 	jBash.registerCommand("hello", "Shows a hello text.", function(params) {jBash.instance.AddLine("Hello World!");});
