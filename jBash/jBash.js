@@ -7,7 +7,7 @@
 */
 
 // the directory to the manuals seen from the loading page.
-const JBASH_MANUAL_DIR = "extern/jbash_manuals/";
+const JBASH_MANUAL_DIR = "manuals/";
 
 jBashObject = function(name, desc, func, isHidden = false)
 {
