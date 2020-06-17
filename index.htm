@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+
+<div id="jbashscreen"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="jBash/jBash.js"></script>
+<script>
+	jBash.initialize("#jbashscreen");
+	jBash.instance.AddLine("Welcome to jBash.<br />Type 'cmd' for a list with all commands.");
+	jBash.instance.AddLine('<a href="https://github.com/ben0bi/jBash">jBash on github</a>');
+
+	jBash.registerCommand("hello", "Shows a hello text.", function(params) {jBash.instance.AddLine("Hello World!");});
+</script>
+</body>
+</html>
