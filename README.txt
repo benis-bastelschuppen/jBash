@@ -12,7 +12,7 @@ and not really important. All the overhead code is commented out and only
 te most important commands are registered.
 
 Then call 
-	jBash.initialize("#mydivid", "index/mystartpage.html");
+	jBash.initialize("#mydivid");
 
 Add commands with
 	jBash.registerCommand("mycommandname", myfunction);
